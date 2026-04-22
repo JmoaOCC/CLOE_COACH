@@ -3,53 +3,51 @@
 <head>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>CLOE_COACH v6</title>
+<title>CLOE_COACH v7</title>
 <link href='https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap' rel='stylesheet'>
 <style>
-:root{
---bg:#0b1020;--card:#131b2e;--card2:#1a2438;--line:#2d3a50;
---accent:#fb923c;--text:#edf2f7;--muted:#9aa7bd;--ok:#22c55e;
-}
+:root{--bg:#0b1020;--card:#131b2e;--card2:#1a2438;--line:#2d3a50;--accent:#fb923c;--text:#edf2f7;--muted:#9aa7bd}
 *{box-sizing:border-box}
 body,button,input,textarea{font-family:Syne,sans-serif}
 body{margin:0;background:var(--bg);color:var(--text)}
-.wrapper{max-width:1280px;margin:auto;padding:24px}
-h1{font-size:50px;margin:0}
-h2{margin:0 0 14px} h3{margin:0 0 10px}
+.wrapper{max-width:1280px;margin:auto;padding:22px}
+h1{margin:0;font-size:50px}
+h2{margin:0 0 14px} h3{margin:0 0 8px}
 button{border:none;cursor:pointer}
 .days,.tabs{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
-.day,.tab,.btn{background:var(--card);color:#fff;padding:11px 15px;border-radius:14px;font-weight:800}
+.day,.tab,.btn{background:var(--card);color:white;padding:11px 15px;border-radius:14px;font-weight:800}
 .active{background:var(--accent);color:#111}
 .btn{background:var(--accent)}
+.topActions{display:flex;gap:10px;flex-wrap:wrap}
 .card{background:var(--card);padding:20px;border-radius:22px;margin-bottom:18px}
 .exercise,.foodOpt{background:var(--card2);padding:18px;border-radius:18px;border:1px solid var(--line);margin-top:14px}
-.foodOpt.sel,.done{border-color:var(--accent)}
 .prescription,.copy,.macro{background:#10192a;padding:14px;border-radius:14px;margin-top:10px;white-space:pre-line}
 .setGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}
 .setBox{background:#10192a;padding:14px;border-radius:16px}
 .setRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 input,textarea{width:100%;padding:14px;background:#0f1728;border:1px solid var(--line);color:white;border-radius:12px}
 input{font-size:20px;font-weight:800}
+.foodOpt.sel{border-color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
 .badge{background:var(--accent);color:#111;padding:4px 8px;border-radius:8px;font-size:10px}
-.small{color:var(--muted);font-size:13px}
-.macro strong{display:block;margin-bottom:8px}
 </style>
 </head>
 <body>
 <div class='wrapper'>
-<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px'>
-<div><h1>C.L.O.E COACH</h1><div id='subtitle' class='small'></div></div>
-<button class='btn' onclick='weeklyReport()'>Informe semanal</button>
+<div style='display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap'>
+<div>
+<h1>C.L.O.E COACH</h1>
+<div id='subtitle' class='small'></div>
+</div>
+<div class='topActions'>
+<button class='btn' onclick='previewReport()'>Informe</button>
+<button class='btn' onclick='shareReport()'>Compartir</button>
+</div>
 </div>
 
 <div class='card'>
-<h2>Resumen objetivo diario aprox</h2>
-<div class='copy'>
-Entreno: 2300-2500 kcal
-Proteína: 160-180g
-Carbohidratos: 220-280g
-Grasas: 65-75g
-</div>
+<h2>Resumen diario objetivo</h2>
+<div class='copy'>2300-2500 kcal | Proteína 160-180g | Carbo 220-280g | Grasas 65-75g</div>
 </div>
 
 <div class='days' id='days'></div>
@@ -58,150 +56,111 @@ Grasas: 65-75g
 </div>
 <script>
 const DAYS=['Lunes Upper A','Martes Lower+Run','Miércoles Recovery','Jueves Upper B','Viernes Lower B','Sábado Long Run','Domingo Descanso'];
-const WORKOUTS={
-0:['Press banca','Jalón al pecho','Remo polea','Elevaciones laterales'],
-1:['Prensa','Peso muerto rumano','Curl femoral'],
-3:['Press inclinado','Jalón neutro','Remo','Face Pull'],
-4:['Hack Squat','Hip Thrust','Zancadas']
-};
+const WORKOUTS={0:['Press banca','Jalón al pecho','Remo polea','Elevaciones laterales'],1:['Prensa','Peso muerto rumano','Curl femoral'],3:['Press inclinado','Jalón neutro','Remo','Face Pull'],4:['Hack Squat','Hip Thrust','Zancadas']};
 const P={
-'Press banca':['3x8-10','40kg'], 'Jalón al pecho':['3x10-12','35kg'],
-'Remo polea':['3x10-12','30kg'],'Elevaciones laterales':['3x12-15','6kg'],
-'Prensa':['3x8-10','80kg'],'Peso muerto rumano':['3x8-10','40kg'],
-'Curl femoral':['3x10-12','25kg'],'Press inclinado':['3x8-10','32kg'],
-'Jalón neutro':['3x10-12','35kg'],'Remo':['3x10-12','30kg'],
-'Face Pull':['3x12-15','15kg'],'Hack Squat':['3x8-10','50kg'],
-'Hip Thrust':['3x8-10','60kg'],'Zancadas':['3x10/lado','10kg']
+'Press banca':['3x8-10','40kg'],'Jalón al pecho':['3x10-12','35kg'],'Remo polea':['3x10-12','30kg'],'Elevaciones laterales':['3x12-15','6kg'],
+'Prensa':['3x8-10','80kg'],'Peso muerto rumano':['3x8-10','40kg'],'Curl femoral':['3x10-12','25kg'],
+'Press inclinado':['3x8-10','32kg'],'Jalón neutro':['3x10-12','35kg'],'Remo':['3x10-12','30kg'],'Face Pull':['3x12-15','15kg'],
+'Hack Squat':['3x8-10','50kg'],'Hip Thrust':['3x8-10','60kg'],'Zancadas':['3x10/lado','10kg']
 };
 const RUNS={1:'8 bloques run/walk',3:'6 intervalos',5:'35 min progresivos'};
-
 const MEALS=[
-{name:'Pollo + arroz + ensalada',qty:'180g pollo | 80g arroz seco | 10g AOVE',mac:'P55 C68 G14 ~620 kcal'},
-{name:'Ternera + patata',qty:'170g ternera | 300g patata',mac:'P45 C60 G18 ~580 kcal'},
-{name:'Atún + garbanzos',qty:'160g atún | 150g garbanzo',mac:'P45 C42 G8 ~450 kcal'},
-{name:'Pavo + pasta',qty:'180g pavo | 80g pasta seca',mac:'P52 C60 G6 ~510 kcal'}
+{name:'Pollo + arroz + ensalada',qty:'180g pollo | 80g arroz seco',mac:'55P 68C 14G ~620 kcal'},
+{name:'Ternera + patata',qty:'170g ternera | 300g patata',mac:'45P 60C 18G ~580 kcal'}
 ];
 const SNACKS=[
-{name:'Yogur + fruta + nueces',qty:'250g +1 fruta +25g nueces',mac:'P28 C35 G18 ~420 kcal'},
-{name:'Pan + pavo',qty:'100g pan +100g pavo',mac:'P30 C50 G4 ~350 kcal'},
-{name:'Whey + avena + plátano',qty:'30g +60g +1 plátano',mac:'P32 C65 G6 ~450 kcal'},
-{name:'Requesón + frutos rojos',qty:'200g +100g',mac:'P24 C18 G8 ~240 kcal'}
+{name:'Whey + avena + plátano',qty:'30g +60g +1 plátano',mac:'32P 65C 6G ~450 kcal'},
+{name:'Yogur + fruta + nueces',qty:'250g + fruta +25g',mac:'28P 35C 18G ~420 kcal'}
 ];
 const DINNERS=[
-{name:'Salmón + patata',qty:'180g +250g',mac:'P40 C45 G22 ~560 kcal'},
-{name:'Pollo + ensalada + aguacate',qty:'180g +70g aguacate',mac:'P52 C18 G18 ~450 kcal'},
-{name:'Merluza + pan',qty:'220g +60g pan',mac:'P45 C30 G5 ~350 kcal'},
-{name:'Tortilla + pan',qty:'2 huevos+2 claras +80g pan',mac:'P30 C38 G14 ~420 kcal'}
+{name:'Salmón + patata',qty:'180g +250g',mac:'40P 45C 22G ~560 kcal'},
+{name:'Pollo + ensalada + aguacate',qty:'180g +70g aguacate',mac:'52P 18C 18G ~450 kcal'}
 ];
-
 let day=0,tab='train';
-let db={}; try{db=JSON.parse(localStorage.getItem('cloev6'))||{}}catch(e){db={}}
-function save(){localStorage.setItem('cloev6',JSON.stringify(db))}
-const key=x=>'d'+day+'_'+x; const val=x=>db[key(x)]||'';
+let db={}; try{db=JSON.parse(localStorage.getItem('cloev7'))||{}}catch(e){db={}}
+const $=x=>document.getElementById(x);
+function save(){localStorage.setItem('cloev7',JSON.stringify(db))}
+const key=x=>'d'+day+'_'+x;
+const val=x=>db[key(x)]||'';
 function setVal(k,v){db[key(k)]=v;save()}
 
 function init(){
-$('days').innerHTML=DAYS.map((d,i)=>`<button class='day ${i==0?'active':''}' onclick='setDay(${i})'>${d.split(' ')[0]}</button>`).join('');
-$('tabs').innerHTML=`
-<button class='tab active' onclick="setTab('train')">Entreno</button>
-<button class='tab' onclick="setTab('run')">Running</button>
-<button class='tab' onclick="setTab('food')">Nutrición</button>
-<button class='tab' onclick="setTab('report')">Reportes</button>`;
+$('days').innerHTML=DAYS.map((d,i)=>`<button class='day ${i===0?'active':''}' onclick='setDay(${i})'>${d.split(' ')[0]}</button>`).join('');
+$('tabs').innerHTML=`<button class='tab active' onclick="setTab('train')">Entreno</button><button class='tab' onclick="setTab('run')">Running</button><button class='tab' onclick="setTab('food')">Nutrición</button><button class='tab' onclick="setTab('report')">Reportes</button>`;
 render();
 }
-function $(x){return document.getElementById(x)}
 function setDay(d){day=d;document.querySelectorAll('.day').forEach((b,i)=>b.classList.toggle('active',i===d));render()}
 function setTab(t){tab=t;let m={train:0,run:1,food:2,report:3};document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',i===m[t]));render()}
-function render(){ $('subtitle').textContent=DAYS[day]; if(tab==='train')train(); if(tab==='run')run(); if(tab==='food')food(); if(tab==='report')report(); }
+function render(){ $('subtitle').textContent=DAYS[day]; if(tab==='train')train(); if(tab==='run')runTab(); if(tab==='food')food(); if(tab==='report')report(); }
 function app(h){$('app').innerHTML=h}
 
-function setBox(i,n){
-return `<div class='setBox'><strong>SET ${n}</strong><div class='setRow'>
-<input value='${val('w'+i+n)}' placeholder='kg hecho' oninput="setVal('w${i+n}',this.value)">
-<input value='${val('r'+i+n)}' placeholder='reps hechas' oninput="setVal('r${i+n}',this.value)">
-</div></div>`
-}
+function setBox(i,n){return `<div class='setBox'><strong>SET ${n}</strong><div class='setRow'><input value='${val('w'+i+n)}' placeholder='kg' oninput="setVal('w${i+n}',this.value)"><input value='${val('r'+i+n)}' placeholder='reps' oninput="setVal('r${i+n}',this.value)"></div></div>`}
 
 function train(){
-let ex=WORKOUTS[day]||[];
-let h=`<div class='card'><h2>Entrenamiento Semana 1</h2>`;
+let ex=WORKOUTS[day]||[]; let h=`<div class='card'><h2>Entrenamiento</h2>`;
 if(!ex.length) h+=`<div class='copy'>Recuperación / movilidad</div>`;
 ex.forEach((e,i)=>{
-let p=P[e];
-let q=encodeURIComponent(e+' tutorial');
-h+=`<div class='exercise'>
-<h3>${e}</h3>
+let p=P[e]; let q=encodeURIComponent(e+' tutorial');
+h+=`<div class='exercise'><h3>${e}</h3>
 <button class='btn' onclick="window.open('https://www.youtube.com/results?search_query=${q}')">Video</button>
-<div class='prescription'>
-<strong>Hoy toca:</strong>
-${p[0]} @ ${p[1]}
-RIR 2-3
-Si completas rango máximo subes peso próxima semana.
-</div>
+<div class='prescription'>Hoy toca\n${p[0]} @ ${p[1]}\nRIR 2-3</div>
 <div class='setGrid'>${setBox(i,1)}${setBox(i,2)}${setBox(i,3)}</div>
 <div class='setGrid'>
-<div class='setBox'>
-Objetivo próxima carga
-<input value='${val('next'+i)}' oninput="setVal('next${i}',this.value)">
-</div>
-<div class='setBox'>
-RIR real
-<input value='${val('rir'+i)}' oninput="setVal('rir${i}',this.value)">
-</div>
-</div>
-</div>`
-})
+<div class='setBox'>Próxima carga<input value='${val('next'+i)}' oninput="setVal('next${i}',this.value)"></div>
+<div class='setBox'>RIR real<input value='${val('rir'+i)}' oninput="setVal('rir${i}',this.value)"></div>
+</div></div>`
+});
 h+=`</div><div class='card'><h2>Observaciones</h2><textarea oninput="setVal('notes',this.value)">${val('notes')}</textarea></div>`;
 app(h)
 }
-
-function run(){
-app(`<div class='card'><h2>Running</h2><div class='copy'>${RUNS[day]||'No hay sesión hoy'}</div></div>`)
-}
+function runTab(){app(`<div class='card'><h2>Running</h2><div class='copy'>${RUNS[day]||'No toca correr hoy'}</div></div>`)}
 
 function foodBlock(title,keyName,data){
 let h=`<div class='card'><h2>${title}</h2>`;
 data.forEach(m=>{
 let sel=val(keyName)===m.name?'sel':'';
-h+=`<div class='foodOpt ${sel}' onclick="setVal('${keyName}','${m.name}');render()">
-<h3>${m.name}</h3>
-<div>${m.qty}</div>
-<div class='macro'><strong>Macros</strong>${m.mac}</div>
-<span class='badge'>Seleccionar</span>
-</div>`
+h+=`<div class='foodOpt ${sel}' onclick="setVal('${keyName}','${m.name}');render()"><h3>${m.name}</h3><div>${m.qty}</div><div class='macro'>${m.mac}</div><span class='badge'>Seleccionar</span></div>`
 });
 return h+'</div>';
 }
-
-function food(){
-let type=(day===2||day===6)?'Lower Carb':'High Carb';
-let h=`<div class='card'><h2>Nutrición diaria</h2>
-<div class='copy'>Tipo día: ${type}
-
-Objetivo aprox:
-Proteína 160-180g
-Carbo ${type==='High Carb'?'240-280g':'180-210g'}
-Grasas 65-75g</div></div>`;
-h+=foodBlock('COMIDA','meal',MEALS);
-h+=foodBlock('MERIENDA','snack',SNACKS);
-h+=foodBlock('CENA','dinner',DINNERS);
-app(h)
-}
-
+function food(){app(`<div>${foodBlock('COMIDA','meal',MEALS)}${foodBlock('MERIENDA','snack',SNACKS)}${foodBlock('CENA','dinner',DINNERS)}</div>`)}
 function report(){
-let h=`<div class='card'><h2>Reporte del día</h2><div class='copy'>`;
-Object.keys(db).filter(k=>k.startsWith('d'+day+'_')).forEach(k=>h+=k.replace('d'+day+'_','')+': '+db[k]+'\n');
-h+='</div></div>';
-app(h)
+let h=`<div class='card'><h2>Reporte del día</h2><div class='copy'>${weeklyReportText(true)}</div></div>`; app(h)
 }
-function weeklyReport(){
-let t='REPORTE SEMANAL\n';
-for(let d=0;d<7;d++){
-t+='\n'+DAYS[d]+'\n';
-Object.keys(db).filter(k=>k.startsWith('d'+d+'_')).forEach(k=>t+=k.replace('d'+d+'_','')+': '+db[k]+'\n')
+
+function weeklyReportText(singleDay=false){
+let t='REPORTE CLOE_COACH\n\n';
+let start=singleDay?day:0;
+let end=singleDay?day:6;
+for(let d=start; d<=end; d++){
+ t+=DAYS[d]+'\n';
+ Object.keys(db).filter(k=>k.startsWith('d'+d+'_')).forEach(k=>{
+  t+=k.replace('d'+d+'_','')+': '+db[k]+'\n';
+ });
+ t+='------------\n';
 }
-alert(t)
+return t;
 }
+
+function previewReport(){
+alert(weeklyReportText());
+}
+
+async function shareReport(){
+const text=weeklyReportText();
+if(navigator.share){
+ try{
+ await navigator.share({
+  title:'Reporte CLOE_COACH',
+  text:text
+ });
+ }catch(e){}
+}else{
+ await navigator.clipboard.writeText(text);
+ alert('Reporte copiado para pegar en Telegram');
+}
+}
+
 init();
 </script>
 </body>
