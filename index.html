@@ -1,168 +1,30 @@
-<!DOCTYPE html>
-<html lang='es'>
+<!doctype html>
+<html lang="es">
 <head>
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>CLOE_COACH v7</title>
-<link href='https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap' rel='stylesheet'>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0; url=login.html">
+<title>C.L.O.E. COACH · Acceso</title>
+<link rel="canonical" href="login.html">
 <style>
-:root{--bg:#0b1020;--card:#131b2e;--card2:#1a2438;--line:#2d3a50;--accent:#fb923c;--text:#edf2f7;--muted:#9aa7bd}
+:root{--bg:#0c1018;--surface:#151b28;--border:#2b3448;--accent:#c8f135;--text:#eef4ff;--muted:#9aa7bd}
 *{box-sizing:border-box}
-body,button,input,textarea{font-family:Syne,sans-serif}
-body{margin:0;background:var(--bg);color:var(--text)}
-.wrapper{max-width:1280px;margin:auto;padding:22px}
-h1{margin:0;font-size:50px}
-h2{margin:0 0 14px} h3{margin:0 0 8px}
-button{border:none;cursor:pointer}
-.days,.tabs{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
-.day,.tab,.btn{background:var(--card);color:white;padding:11px 15px;border-radius:14px;font-weight:800}
-.active{background:var(--accent);color:#111}
-.btn{background:var(--accent)}
-.topActions{display:flex;gap:10px;flex-wrap:wrap}
-.card{background:var(--card);padding:20px;border-radius:22px;margin-bottom:18px}
-.exercise,.foodOpt{background:var(--card2);padding:18px;border-radius:18px;border:1px solid var(--line);margin-top:14px}
-.prescription,.copy,.macro{background:#10192a;padding:14px;border-radius:14px;margin-top:10px;white-space:pre-line}
-.setGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px}
-.setBox{background:#10192a;padding:14px;border-radius:16px}
-.setRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-input,textarea{width:100%;padding:14px;background:#0f1728;border:1px solid var(--line);color:white;border-radius:12px}
-input{font-size:20px;font-weight:800}
-.foodOpt.sel{border-color:var(--accent)}
-.small{font-size:13px;color:var(--muted)}
-.badge{background:var(--accent);color:#111;padding:4px 8px;border-radius:8px;font-size:10px}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.card{width:min(92vw,420px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;text-align:center}
+h1{margin:0 0 8px;font-size:30px}
+h1 span{color:var(--accent)}
+p{margin:0 0 20px;color:var(--muted)}
+a{display:inline-block;background:var(--accent);color:#111;text-decoration:none;font-weight:800;padding:12px 18px;border-radius:10px}
 </style>
 </head>
 <body>
-<div class='wrapper'>
-<div style='display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap'>
-<div>
-<h1>CLOE COACH - Jorge</h1>
-<div id='subtitle' class='small'></div>
-</div>
-<div class='topActions'>
-<button class='btn' onclick='previewReport()'>Informe</button>
-<button class='btn' onclick='shareReport()'>Compartir</button>
-</div>
-</div>
-
-<div class='card'>
-<h2>Resumen diario objetivo</h2>
-<div class='copy'>2300-2500 kcal | Proteína 160-180g | Carbo 220-280g | Grasas 65-75g</div>
-</div>
-
-<div class='days' id='days'></div>
-<div class='tabs' id='tabs'></div>
-<div id='app'></div>
+<div class="card">
+  <h1>C.L.O.E. <span>COACH</span></h1>
+  <p>Redirigiendo al acceso privado...</p>
+  <a href="login.html">Entrar al login</a>
 </div>
 <script>
-const DAYS=['Lunes Upper A','Martes Lower+Run','Miércoles Recovery','Jueves Upper B','Viernes Lower B','Sábado Long Run','Domingo Descanso'];
-const WORKOUTS={0:['Press banca','Jalón al pecho','Remo polea','Elevaciones laterales'],1:['Prensa','Peso muerto rumano','Curl femoral'],3:['Press inclinado','Jalón neutro','Remo','Face Pull'],4:['Hack Squat','Hip Thrust','Zancadas']};
-const P={
-'Press banca':['3x8-10','40kg'],'Jalón al pecho':['3x10-12','35kg'],'Remo polea':['3x10-12','30kg'],'Elevaciones laterales':['3x12-15','6kg'],
-'Prensa':['3x8-10','80kg'],'Peso muerto rumano':['3x8-10','40kg'],'Curl femoral':['3x10-12','25kg'],
-'Press inclinado':['3x8-10','32kg'],'Jalón neutro':['3x10-12','35kg'],'Remo':['3x10-12','30kg'],'Face Pull':['3x12-15','15kg'],
-'Hack Squat':['3x8-10','50kg'],'Hip Thrust':['3x8-10','60kg'],'Zancadas':['3x10/lado','10kg']
-};
-const RUNS={1:'8 bloques run/walk',3:'6 intervalos',5:'35 min progresivos'};
-const MEALS=[
-{name:'Pollo + arroz + ensalada',qty:'180g pollo | 80g arroz seco',mac:'55P 68C 14G ~620 kcal'},
-{name:'Ternera + patata',qty:'170g ternera | 300g patata',mac:'45P 60C 18G ~580 kcal'}
-];
-const SNACKS=[
-{name:'Whey + avena + plátano',qty:'30g +60g +1 plátano',mac:'32P 65C 6G ~450 kcal'},
-{name:'Yogur + fruta + nueces',qty:'250g + fruta +25g',mac:'28P 35C 18G ~420 kcal'}
-];
-const DINNERS=[
-{name:'Salmón + patata',qty:'180g +250g',mac:'40P 45C 22G ~560 kcal'},
-{name:'Pollo + ensalada + aguacate',qty:'180g +70g aguacate',mac:'52P 18C 18G ~450 kcal'}
-];
-let day=0,tab='train';
-let db={}; try{db=JSON.parse(localStorage.getItem('cloev7'))||{}}catch(e){db={}}
-const $=x=>document.getElementById(x);
-function save(){localStorage.setItem('cloev7',JSON.stringify(db))}
-const key=x=>'d'+day+'_'+x;
-const val=x=>db[key(x)]||'';
-function setVal(k,v){db[key(k)]=v;save()}
-
-function init(){
-$('days').innerHTML=DAYS.map((d,i)=>`<button class='day ${i===0?'active':''}' onclick='setDay(${i})'>${d.split(' ')[0]}</button>`).join('');
-$('tabs').innerHTML=`<button class='tab active' onclick="setTab('train')">Entreno</button><button class='tab' onclick="setTab('run')">Running</button><button class='tab' onclick="setTab('food')">Nutrición</button><button class='tab' onclick="setTab('report')">Reportes</button>`;
-render();
-}
-function setDay(d){day=d;document.querySelectorAll('.day').forEach((b,i)=>b.classList.toggle('active',i===d));render()}
-function setTab(t){tab=t;let m={train:0,run:1,food:2,report:3};document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',i===m[t]));render()}
-function render(){ $('subtitle').textContent=DAYS[day]; if(tab==='train')train(); if(tab==='run')runTab(); if(tab==='food')food(); if(tab==='report')report(); }
-function app(h){$('app').innerHTML=h}
-
-function setBox(i,n){return `<div class='setBox'><strong>SET ${n}</strong><div class='setRow'><input value='${val('w'+i+n)}' placeholder='kg' oninput="setVal('w${i+n}',this.value)"><input value='${val('r'+i+n)}' placeholder='reps' oninput="setVal('r${i+n}',this.value)"></div></div>`}
-
-function train(){
-let ex=WORKOUTS[day]||[]; let h=`<div class='card'><h2>Entrenamiento</h2>`;
-if(!ex.length) h+=`<div class='copy'>Recuperación / movilidad</div>`;
-ex.forEach((e,i)=>{
-let p=P[e]; let q=encodeURIComponent(e+' tutorial');
-h+=`<div class='exercise'><h3>${e}</h3>
-<button class='btn' onclick="window.open('https://www.youtube.com/results?search_query=${q}')">Video</button>
-<div class='prescription'>Hoy toca\n${p[0]} @ ${p[1]}\nRIR 2-3</div>
-<div class='setGrid'>${setBox(i,1)}${setBox(i,2)}${setBox(i,3)}</div>
-<div class='setGrid'>
-<div class='setBox'>Próxima carga<input value='${val('next'+i)}' oninput="setVal('next${i}',this.value)"></div>
-<div class='setBox'>RIR real<input value='${val('rir'+i)}' oninput="setVal('rir${i}',this.value)"></div>
-</div></div>`
-});
-h+=`</div><div class='card'><h2>Observaciones</h2><textarea oninput="setVal('notes',this.value)">${val('notes')}</textarea></div>`;
-app(h)
-}
-function runTab(){app(`<div class='card'><h2>Running</h2><div class='copy'>${RUNS[day]||'No toca correr hoy'}</div></div>`)}
-
-function foodBlock(title,keyName,data){
-let h=`<div class='card'><h2>${title}</h2>`;
-data.forEach(m=>{
-let sel=val(keyName)===m.name?'sel':'';
-h+=`<div class='foodOpt ${sel}' onclick="setVal('${keyName}','${m.name}');render()"><h3>${m.name}</h3><div>${m.qty}</div><div class='macro'>${m.mac}</div><span class='badge'>Seleccionar</span></div>`
-});
-return h+'</div>';
-}
-function food(){app(`<div>${foodBlock('COMIDA','meal',MEALS)}${foodBlock('MERIENDA','snack',SNACKS)}${foodBlock('CENA','dinner',DINNERS)}</div>`)}
-function report(){
-let h=`<div class='card'><h2>Reporte del día</h2><div class='copy'>${weeklyReportText(true)}</div></div>`; app(h)
-}
-
-function weeklyReportText(singleDay=false){
-let t='REPORTE CLOE_COACH\n\n';
-let start=singleDay?day:0;
-let end=singleDay?day:6;
-for(let d=start; d<=end; d++){
- t+=DAYS[d]+'\n';
- Object.keys(db).filter(k=>k.startsWith('d'+d+'_')).forEach(k=>{
-  t+=k.replace('d'+d+'_','')+': '+db[k]+'\n';
- });
- t+='------------\n';
-}
-return t;
-}
-
-function previewReport(){
-alert(weeklyReportText());
-}
-
-async function shareReport(){
-const text=weeklyReportText();
-if(navigator.share){
- try{
- await navigator.share({
-  title:'Reporte CLOE_COACH',
-  text:text
- });
- }catch(e){}
-}else{
- await navigator.clipboard.writeText(text);
- alert('Reporte copiado para pegar en Telegram');
-}
-}
-
-init();
+window.location.replace('login.html');
 </script>
 </body>
 </html>
-```
